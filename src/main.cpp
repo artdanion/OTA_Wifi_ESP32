@@ -7,9 +7,6 @@
 
 #define ESP32_RTOS
 
-char PortalName[20];
-uint32_t chipId = 0;
-
 #if defined(ESP32_RTOS) && defined(ESP32)
 void ota_handle( void * parameter ) {
   for (;;) {
@@ -52,21 +49,9 @@ void setupOTA_Wifi(const char* nameprefix)
   //SPIFFS.format();
 
   WiFi.mode(WIFI_STA);
-
-  // unique ESP Id
-  // for(int i=0; i<17; i=i+8)
-  // {
-	//   chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
-	// }
-  // snprintf(PortalName, sizeof(PortalName), "ESP_%d", chipId);
-
   WiFi.setHostname(fullhostname);
   
-  delete[] fullhostname;
-
-  Serial.println(PortalName);
-
-  if (!wifiManager.autoConnect(PortalName, "EnterThis"))
+  if (!wifiManager.autoConnect(fullhostname, "EnterThis"))
   {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
@@ -78,6 +63,8 @@ void setupOTA_Wifi(const char* nameprefix)
   Serial.println("local ip  ");
   Serial.print(WiFi.localIP());
   Serial.println();
+  Serial.println(fullhostname);
+  delete[] fullhostname;
 
   Serial.println("Done");
 
